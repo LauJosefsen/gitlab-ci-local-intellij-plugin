@@ -55,16 +55,19 @@ class GclToolWindow(toolWindow: ToolWindow, project : Project) {
         } }
 
 
-        val projectDir = project!!.guessProjectDir()!!.path
-        try {
-            val process =  ProcessBuilder("gitlab-ci-local", "--list").directory(File(projectDir)).start();
-            stdout = process.inputStream.bufferedReader().readText();
-            stderr = process.errorStream.bufferedReader().readText();
-        }
-        catch (e: Exception) {
-            refreshButton?.text = "Error: " + e.message
-            return
-        }
+//        val projectDir = project!!.guessProjectDir()!!.path
+//        try {
+//            val process =  ProcessBuilder("gitlab-ci-local", "--list").directory(File(projectDir)).start();
+//            stdout = process.inputStream.bufferedReader().readText();
+//            stderr = process.errorStream.bufferedReader().readText();
+//        }
+//        catch (e: Exception) {
+//            refreshButton?.text = "Error: " + e.message
+//            return
+//        }
+
+        println("stdout: " + stdout)
+        println("stderr: " + stderr)
 
 
         // parse output
