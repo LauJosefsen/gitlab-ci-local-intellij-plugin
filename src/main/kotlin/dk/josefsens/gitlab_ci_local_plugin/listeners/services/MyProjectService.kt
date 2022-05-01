@@ -1,7 +1,7 @@
-package org.jetbrains.plugins.template.services
+package dk.josefsens.gitlab_ci_local_plugin.listeners.services
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.plugins.template.MyBundle
+import dk.josefsens.gitlab_ci_local_plugin.MyBundle
 
 class MyProjectService(project: Project) {
 

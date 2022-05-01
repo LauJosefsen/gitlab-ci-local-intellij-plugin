@@ -1,4 +1,4 @@
-package org.jetbrains.plugins.template
+package dk.josefsens.gitlab_ci_local_plugin
 
 import com.intellij.DynamicBundle
 import org.jetbrains.annotations.NonNls

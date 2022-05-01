@@ -1,18 +1,19 @@
 <!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
 <idea-plugin>
     <id>org.jetbrains.plugins.template</id>
-    <name>Template</name>
-    <vendor>JetBrains</vendor>
+    <name>Gitlab-CI-Local Helper</name>
+    <vendor>LauJosefsen</vendor>
 
     <depends>com.intellij.modules.platform</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <applicationService serviceImplementation="org.jetbrains.plugins.template.services.MyApplicationService"/>
-        <projectService serviceImplementation="org.jetbrains.plugins.template.services.MyProjectService"/>
+        <applicationService serviceImplementation="dk.josefsens.gitlab_ci_local_plugin.listeners.services.MyApplicationService"/>
+        <projectService serviceImplementation="dk.josefsens.gitlab_ci_local_plugin.listeners.services.MyProjectService"/>
+        <toolWindow id="Gitlab-CI-Local-Helper" anchor="right" factoryClass="dk.josefsens.gitlab_ci_local_plugin.GitlabCiLocalToolWindowFactory"/>
     </extensions>
 
     <applicationListeners>
-        <listener class="org.jetbrains.plugins.template.listeners.MyProjectManagerListener"
+        <listener class="dk.josefsens.gitlab_ci_local_plugin.listeners.MyProjectManagerListener"
                   topic="com.intellij.openapi.project.ProjectManagerListener"/>
     </applicationListeners>
 </idea-plugin>
