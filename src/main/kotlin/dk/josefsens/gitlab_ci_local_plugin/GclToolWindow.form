@@ -14,14 +14,6 @@
         </constraints>
         <properties/>
       </component>
-      <component id="51353" class="javax.swing.JList" binding="list">
-        <constraints>
-          <grid row="1" column="0" row-span="1" col-span="2" vsize-policy="6" hsize-policy="2" anchor="0" fill="3" indent="0" use-parent-layout="false">
-            <preferred-size width="150" height="50"/>
-          </grid>
-        </constraints>
-        <properties/>
-      </component>
       <component id="1a272" class="javax.swing.JButton" binding="refreshButton">
         <constraints>
           <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
@@ -30,6 +22,22 @@
           <horizontalAlignment value="0"/>
           <icon value="actions/refresh.png"/>
           <text value=""/>
+        </properties>
+      </component>
+      <component id="f802d" class="javax.swing.JTree" binding="tree">
+        <constraints>
+          <grid row="1" column="0" row-span="1" col-span="2" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
+            <preferred-size width="150" height="50"/>
+          </grid>
+        </constraints>
+        <properties/>
+      </component>
+      <component id="de0f1" class="javax.swing.JCheckBox" binding="checkBox">
+        <constraints>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Run needs"/>
         </properties>
       </component>
     </children>
