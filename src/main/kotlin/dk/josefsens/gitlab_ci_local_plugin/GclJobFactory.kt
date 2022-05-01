@@ -33,6 +33,9 @@ class GclJobFactory {
 
     fun parse(fileContent: String): List<GclJob> {
         val lines = fileContent.lines()
+        if(lines.count() < 3){
+            return emptyList()
+        }
         val headerLocations = parseHeader(lines[1])
         return lines.drop(2).filter { it.isNotBlank() }.map { parseJobLine(it, headerLocations) }
     }
