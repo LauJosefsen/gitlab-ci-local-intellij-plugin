@@ -10,8 +10,8 @@ import javax.swing.JPanel
 class GclRunConfigurationEditor : SettingsEditor<GclRunConfiguration>() {
   private val myPanel: JPanel? = null
   private var myScriptName: LabeledComponent<TextFieldWithBrowseButton>? = null
-  override fun resetEditorFrom(demoRunConfiguration: GclRunConfiguration) {
-    myScriptName!!.component.text = demoRunConfiguration.scriptName.toString()
+  override fun resetEditorFrom(gclRunConfiguration: GclRunConfiguration) {
+    myScriptName!!.component.text = gclRunConfiguration.scriptName.toString()
   }
 
   override fun applyEditorTo(demoRunConfiguration: GclRunConfiguration) {

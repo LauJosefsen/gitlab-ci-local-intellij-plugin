@@ -15,14 +15,14 @@ class GclJobFactory {
         val description = line.substring(headerLocations.description, headerLocations.stage).trim()
         val stage = line.substring(headerLocations.stage, headerLocations.glWhen).trim()
         val glWhen = line.substring(headerLocations.glWhen, headerLocations.allowFailure).trim()
-        val allowFailure = line.substring(headerLocations.allowFailure, headerLocations.needs).trim().toBoolean()
-        val needsStr = line.substring(headerLocations.needs).trim().trimStart('[').trimEnd(']')
+        val allowFailure = line.substring(headerLocations.allowFailure, minOf(headerLocations.needs,line.length)).trim().toBoolean()
+        val needsStr = line.substring(minOf(headerLocations.needs,line.length)).trim().trimStart('[').trimEnd(']')
         val needs = needsStr.split(',').map { it.trim() }
         return GclJob(name, description, stage, glWhen, allowFailure, needs)
     }
 
     fun parseHeader(line: String): HeaderLocations {
-        var headerLocations = HeaderLocations()
+        val headerLocations = HeaderLocations()
         headerLocations.description = line.indexOf("description")
         headerLocations.stage = line.indexOf("stage")
         headerLocations.glWhen = line.indexOf("when")

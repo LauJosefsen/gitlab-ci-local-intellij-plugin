@@ -10,6 +10,7 @@ import com.intellij.execution.process.ProcessTerminatedListener
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.openapi.options.SettingsEditor
 import com.intellij.openapi.project.Project
+import dk.josefsens.gitlab_ci_local_plugin.dk.josefsens.gitlab_ci_local_plugin.WslUtils
 import java.io.File
 
 class GclRunConfiguration(project: Project?, factory: ConfigurationFactory?, name: String?) :
@@ -35,12 +36,9 @@ class GclRunConfiguration(project: Project?, factory: ConfigurationFactory?, nam
         return object : CommandLineState(executionEnvironment) {
             @Throws(ExecutionException::class)
             override fun startProcess(): ProcessHandler {
-                // execute on remote
-                println(project.basePath)
-
-
-                val commandLine = GeneralCommandLine(options.scriptName, name)
-                commandLine.workDirectory = File(project.basePath);
+                val script = listOf(scriptName!!) + name.split(" ")
+                val commandLine = GeneralCommandLine(WslUtils.rewriteToWslExec(project.basePath!!, script))
+                commandLine.workDirectory = File(project.basePath!!);
                 val processHandler = ProcessHandlerFactory.getInstance().createColoredProcessHandler(commandLine)
                 ProcessTerminatedListener.attach(processHandler)
                 return processHandler

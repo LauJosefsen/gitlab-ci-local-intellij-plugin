@@ -9,11 +9,11 @@ import javax.swing.Icon
 
 class GclRunConfigurationType : ConfigurationType {
     override fun getDisplayName(): String {
-        return "Demo"
+        return "GitlabCiLocal"
     }
 
     override fun getConfigurationTypeDescription(): String {
-        return "Demo run configuration type"
+        return "GitlabCiLocal runner"
     }
 
     override fun getIcon(): Icon {
@@ -29,6 +29,6 @@ class GclRunConfigurationType : ConfigurationType {
     }
 
     companion object {
-        const val ID = "DemoRunConfiguration"
+        const val ID = "GitlabCiLocal"
     }
 }

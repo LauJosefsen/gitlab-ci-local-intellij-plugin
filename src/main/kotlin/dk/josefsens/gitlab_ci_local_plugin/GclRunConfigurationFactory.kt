@@ -16,7 +16,7 @@ class GclRunConfigurationFactory(type: ConfigurationType?) : ConfigurationFactor
     }
 
     override fun createTemplateConfiguration(project: Project): RunConfiguration {
-        return GclRunConfiguration(project, this, "Demo")
+        return GclRunConfiguration(project, this, "GitlabCiLocal")
     }
 
     override fun getOptionsClass(): Class<out BaseState?> {

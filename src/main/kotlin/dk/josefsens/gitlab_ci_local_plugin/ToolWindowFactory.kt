@@ -11,7 +11,7 @@ import com.intellij.ui.content.ContentFactory
 
 class GitlabCiLocalToolWindowFactory : ToolWindowFactory {
     override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
-        val myToolWindow = GclToolWindow(toolWindow, project)
+        val myToolWindow = GclToolWindow(project)
         val contentFactory = ContentFactory.SERVICE.getInstance()
         val content: Content = contentFactory.createContent(myToolWindow.content, "", false)
         toolWindow.contentManager.addContent(content)

@@ -5,8 +5,8 @@ import com.intellij.execution.configurations.RunConfigurationOptions
 import com.intellij.openapi.components.StoredProperty
 
 class GclRunConfigurationOptions : RunConfigurationOptions() {
-    private val myScriptName: StoredProperty<String?> = string("gitlab-ci-local").provideDelegate(this, "scriptName")
-
+    private val myScriptName: StoredProperty<String?> = string("gitlab-ci-local")
+        .provideDelegate(this, "scriptName")
 
     var scriptName: String?
         get() = myScriptName.getValue(this)
