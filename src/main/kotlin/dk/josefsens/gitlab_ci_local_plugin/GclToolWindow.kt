@@ -7,16 +7,32 @@ import com.intellij.execution.RunManager
 import com.intellij.execution.RunnerAndConfigurationSettings
 import com.intellij.execution.configurations.ConfigurationFactory
 import com.intellij.execution.configurations.ConfigurationType
+import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.configurations.RunConfiguration
+import com.intellij.execution.configurations.RunProfile
+import com.intellij.execution.configurations.RunProfileState
 import com.intellij.execution.executors.DefaultRunExecutor
+import com.intellij.execution.impl.RunManagerImpl
+import com.intellij.execution.impl.RunnerAndConfigurationSettingsImpl
+import com.intellij.execution.process.ProcessOutput
+import com.intellij.execution.process.ScriptRunnerUtil
+import com.intellij.execution.runners.ExecutionEnvironment
+import com.intellij.execution.runners.ProgramRunner
+import com.intellij.execution.util.ExecUtil
+import com.intellij.openapi.progress.ProgressIndicator
+import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.wm.ToolWindow
+import com.intellij.task.ProjectTaskManager
+import com.intellij.testFramework.runInLoadComponentStateMode
 import org.jetbrains.annotations.NotNull
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import java.awt.event.MouseListener
 import java.io.File
+import java.util.concurrent.CompletableFuture
 import javax.swing.*
 import javax.swing.tree.DefaultMutableTreeNode
 import javax.swing.tree.DefaultTreeCellRenderer
@@ -31,6 +47,9 @@ class GclToolWindow(toolWindow: ToolWindow, project : Project) {
     private var panel: JPanel? = null
     private var project: Project? = null
     private var checkBox: JCheckBox? = null
+    private var textArea: JTextArea? = null
+    private var stdout: String = "";
+    private var stderr: String = "";
 
     init {
         this.project = project
@@ -38,26 +57,77 @@ class GclToolWindow(toolWindow: ToolWindow, project : Project) {
         Refresh()
     }
 
+    private fun GclList(): String? {
+        val runConfiguration = GeneralCommandLine("gitlab-ci-local", "--list")
+            .withRedirectErrorStream(true)
+        runConfiguration.workDirectory = File(project!!.basePath!!)
+        return ScriptRunnerUtil.getProcessOutput(runConfiguration);
+    }
+
     private fun Refresh() {
         // set loading message
         refreshButton?.text = "Loading...";
 
-        // run `gitlab-ci-local --list`
-        var stdout = "";
-        var stderr = "";
+        val task: Task.Backgroundable = object : Task.Backgroundable(project, "Loading...", true) {
+            override fun run(indicator: ProgressIndicator) {
+                val output = GclList()
+                stdout = output!!;
+            }
+        }
+
+        ProgressManager.getInstance().run(task)
+
+        // wait for task to finish
+
+
+//        val out = ExecUtil.execAndGetOutput(runConfiguration);
+
+//        stdout = out.stdout
+//        stderr = out.stderr
+
+
+
+        // set result message
+        refreshButton?.text = "Refresh";
+
+        // set result message
+
+
 
         // run `gitlab-ci-local --list` in project
-        project.runCatching { ProcessBuilder("gitlab-ci-local", "--list").directory(File(project?.guessProjectDir()?.path
-            ?: "")).start().apply {
-            waitFor()
-            stdout = inputStream.bufferedReader().readText()
-            stderr = errorStream.bufferedReader().readText()
-        } }
+//        project.runCatching { ProcessBuilder("gitlab-ci-local", "--list").directory(File(project?.guessProjectDir()?.path
+//            ?: "")).start().apply {
+//            waitFor()
+//            stdout = inputStream.bufferedReader().readText()
+//            stderr = errorStream.bufferedReader().readText()
+//        } }
 
 
-//        val projectDir = project!!.guessProjectDir()!!.path
+        val projectDir = project!!.guessProjectDir()!!.path
+
+//        var runner: RunnerAndConfigurationSettings = RunManager.getInstance(project!!).createConfiguration("list", GclRunConfigurationType::class.java);
+//        RunManager.getInstance(project!!).addConfiguration(runner);
+//        var executor: Executor = DefaultRunExecutor.getRunExecutorInstance();
+//        var out = ProgramRunnerUtil.executeConfiguration(runner, executor)
+
+
+
+//        executor.
+//        executor.runCatching {
+//            ProcessBuilder("gitlab-ci-local", "--list").directory(File(project?.guessProjectDir()?.path
+//                ?: "")).start().apply {
+//                waitFor()
+//                stdout = inputStream.bufferedReader().readText()
+//                stderr = errorStream.bufferedReader().readText()
+//            }
+//        }
+
+//        project.runInLoadComponentStateMode {  }
+//
 //        try {
-//            val process =  ProcessBuilder("gitlab-ci-local", "--list").directory(File(projectDir)).start();
+//            val process =  ProcessBuilder("gitlab-ci-local", "--list")
+//                .apply( project )
+//                .directory(File(projectDir)).start();
 //            stdout = process.inputStream.bufferedReader().readText();
 //            stderr = process.errorStream.bufferedReader().readText();
 //        }
@@ -66,6 +136,7 @@ class GclToolWindow(toolWindow: ToolWindow, project : Project) {
 //            return
 //        }
 
+        textArea?.text = "stdout: $stdout\nstderr: $stderr";
         println("stdout: " + stdout)
         println("stderr: " + stderr)
 

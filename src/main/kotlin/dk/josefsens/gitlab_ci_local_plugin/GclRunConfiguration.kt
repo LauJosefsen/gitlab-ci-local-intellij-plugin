@@ -35,6 +35,10 @@ class GclRunConfiguration(project: Project?, factory: ConfigurationFactory?, nam
         return object : CommandLineState(executionEnvironment) {
             @Throws(ExecutionException::class)
             override fun startProcess(): ProcessHandler {
+                // execute on remote
+                println(project.basePath)
+
+
                 val commandLine = GeneralCommandLine(options.scriptName, name)
                 commandLine.workDirectory = File(project.basePath);
                 val processHandler = ProcessHandlerFactory.getInstance().createColoredProcessHandler(commandLine)
