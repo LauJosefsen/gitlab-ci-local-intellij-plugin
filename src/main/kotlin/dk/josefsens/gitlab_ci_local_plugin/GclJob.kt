@@ -7,8 +7,4 @@ class GclJob (name: String, description: String, stage: String, glWhen: String, 
     private val glWhen = glWhen;
     private val allow_failure = allow_failure
     private val needs = needs;
-
-    init{
-        println("GclJob.kt: GclJob()")
-    }
 }

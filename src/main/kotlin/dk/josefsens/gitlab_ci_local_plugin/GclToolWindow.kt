@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 package dk.josefsens.gitlab_ci_local_plugin
 
 import com.google.common.io.Resources.getResource
@@ -9,11 +11,15 @@ import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.executors.DefaultRunExecutor
 import com.intellij.execution.process.ProcessOutput
 import com.intellij.execution.util.ExecUtil
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.popup.Balloon
+import com.intellij.openapi.ui.popup.JBPopupFactory
 import dk.josefsens.gitlab_ci_local_plugin.dk.josefsens.gitlab_ci_local_plugin.WslUtils
+import java.awt.Color
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import java.awt.event.MouseListener
@@ -25,48 +31,61 @@ import javax.swing.tree.DefaultTreeModel
 import javax.swing.tree.TreePath
 
 
-class GclToolWindow(project : Project) {
+class GclToolWindow(private var project: Project) {
     private var tree: JTree? = null
     private var refreshButton: JButton? = null
     private var panel: JPanel? = null
-    private var project: Project? = null
     private var checkBox: JCheckBox? = null
-    private var textArea: JTextArea? = null
 
     init {
-        this.project = project
-        refreshButton!!.addActionListener { Refresh() }
-        Refresh()
+        this.tree?.model = DefaultTreeModel(DefaultMutableTreeNode(this.project.name));
+        refreshButton!!.addActionListener { refresh() }
+        refresh()
     }
-    private fun Refresh() {
-        // set loading message
-        refreshButton?.text = "Loading..."
-        println(project?.basePath)
 
-        val task: Task.Backgroundable = object : Task.Backgroundable(project, "Loading...", true) {
+    private fun refresh() {
+        val task: Task.Backgroundable = object : Task.Backgroundable(project, "Fetching Gitlab-CI jobs...", true) {
             override fun run(indicator: ProgressIndicator) {
-                val output = GclList()
+                val output = gclList()
                 refreshButton?.text = ""
-                if(output.exitCode != 0){
-                    textArea?.text = output.stderr
+                if (output.exitCode != 0) {
+                    // show IDE balloon
+                    ApplicationManager.getApplication().invokeLater {
+                        JBPopupFactory.getInstance()
+                            .createHtmlTextBalloonBuilder(
+                                "<html>Error:<br>${output.stderr.ifEmpty { output.stdout }}</html>",
+                                null,
+                                Color.BLACK,
+                                Color.RED,
+                                null
+                            )
+                            .createBalloon()
+                            .show(
+                                JBPopupFactory.getInstance()
+                                    .guessBestPopupLocation(refreshButton!!),
+                                Balloon.Position.atRight
+                            )
+                    }
                     return
                 }
-                textArea?.text = ""
 
                 // parse output
                 val gclJobs = GclJobFactory().parse(output.stdout)
 
-                // display output
-                showGclJobs(gclJobs)
+                // update UI
+                ApplicationManager.getApplication().invokeLater {
+                    showGclJobs(gclJobs)
+                }
             }
         }
         ProgressManager.getInstance().run(task)
     }
 
-    private fun GclList(): ProcessOutput {
-        val runConfiguration = GeneralCommandLine(WslUtils.rewriteToWslExec(project!!.basePath!!, listOf("gitlab-ci-local", "--list")))
-            .withRedirectErrorStream(true)
-        runConfiguration.workDirectory = File(project!!.basePath!!)
+    private fun gclList(): ProcessOutput {
+        val runConfiguration =
+            GeneralCommandLine(WslUtils.rewriteToWslExec(project.basePath!!, listOf("gitlab-ci-local", "--list")))
+                .withRedirectErrorStream(true)
+        runConfiguration.workDirectory = File(project.basePath!!)
         return ExecUtil.execAndGetOutput(runConfiguration);
     }
 
@@ -84,7 +103,7 @@ class GclToolWindow(project : Project) {
         }
 
         // create tree
-        val root = DefaultMutableTreeNode(project!!.name)
+        val root = DefaultMutableTreeNode(project.name)
 
         for (stage in stages) {
             val stageNode = DefaultMutableTreeNode(stage.stage)
@@ -93,18 +112,26 @@ class GclToolWindow(project : Project) {
             }
             root.add(stageNode)
         }
+
         val imageIcon = ImageIcon(getResource("general/gearPlain_dark.png"))
-        var folderIcon = ImageIcon(getResource("nodes/package.png"))
+        val folderIcon = ImageIcon(getResource("nodes/package.png"))
         val renderer = DefaultTreeCellRenderer()
         renderer.leafIcon = imageIcon
         renderer.openIcon = folderIcon
         renderer.closedIcon = folderIcon
+        // on
         tree?.cellRenderer = renderer
         tree?.model = DefaultTreeModel(root)
 
+        for (i in 0 until tree!!.visibleRowCount) {
+            tree!!.expandPath(tree!!.getPathForRow(i))
+        }
+
         // add mouse listener
         addMouseListener()
+        tree?.fireTreeExpanded(TreePath(root))
     }
+
 
     fun addMouseListener() {
         val ml: MouseListener = object : MouseAdapter() {
@@ -112,10 +139,13 @@ class GclToolWindow(project : Project) {
                 val selRow = tree!!.getRowForLocation(e.x, e.y)
                 val selPath: TreePath? = tree!!.getPathForLocation(e.x, e.y)
                 if (selPath != null && selPath.pathCount > 2 && selRow != -1 && e.clickCount == 2) {
-                    val script = selPath.path[2].toString() + " " + (if(checkBox!!.isSelected) "--needs" else "--no-needs")
-                    val runner: RunnerAndConfigurationSettings = RunManager.getInstance(project!!)
+                    val script =
+                        selPath.path[2].toString() + " " + (if (checkBox!!.isSelected) "--needs" else "--no-needs")
+                    val runner: RunnerAndConfigurationSettings = RunManager.getInstance(project)
                         .createConfiguration(script, GclRunConfigurationType::class.java);
-                    RunManager.getInstance(project!!).addConfiguration(runner);
+                    RunManager.getInstance(project).addConfiguration(runner);
+                    // set the configuration as the selected configuration
+                    RunManager.getInstance(project).selectedConfiguration = runner;
                     val executor: Executor = DefaultRunExecutor.getRunExecutorInstance();
                     ProgramRunnerUtil.executeConfiguration(runner, executor)
                 }
