@@ -1,4 +1,4 @@
-package dk.josefsens.gitlab_ci_local_plugin.dk.josefsens.gitlab_ci_local_plugin
+package dk.cego.gitlab_ci_local_plugin
 
 class WslUtils {
     companion object {

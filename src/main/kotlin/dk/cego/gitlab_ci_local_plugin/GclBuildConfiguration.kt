@@ -3,7 +3,7 @@
  * found in the LICENSE file.
  */
 
-package dk.josefsens.gitlab_ci_local_plugin
+package dk.cego.gitlab_ci_local_plugin
 
 import com.intellij.openapi.roots.ProjectModelBuildableElement
 import com.intellij.openapi.roots.ProjectModelExternalSource

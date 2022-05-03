@@ -1,6 +1,6 @@
 @file:Suppress("UnstableApiUsage")
 
-package dk.josefsens.gitlab_ci_local_plugin
+package dk.cego.gitlab_ci_local_plugin
 
 import com.google.common.io.Resources.getResource
 import com.intellij.execution.Executor
@@ -18,7 +18,6 @@ import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.Balloon
 import com.intellij.openapi.ui.popup.JBPopupFactory
-import dk.josefsens.gitlab_ci_local_plugin.dk.josefsens.gitlab_ci_local_plugin.WslUtils
 import java.awt.Color
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent

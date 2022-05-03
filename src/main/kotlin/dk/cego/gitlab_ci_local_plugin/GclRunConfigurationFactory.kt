@@ -6,9 +6,9 @@ import com.intellij.execution.configurations.ConfigurationType
 import com.intellij.execution.configurations.RunConfiguration
 import com.intellij.openapi.components.BaseState
 import com.intellij.openapi.project.Project
-import dk.josefsens.gitlab_ci_local_plugin.GclRunConfiguration
-import dk.josefsens.gitlab_ci_local_plugin.GclRunConfigurationOptions
-import dk.josefsens.gitlab_ci_local_plugin.GclRunConfigurationType
+import dk.cego.gitlab_ci_local_plugin.GclRunConfiguration
+import dk.cego.gitlab_ci_local_plugin.GclRunConfigurationOptions
+import dk.cego.gitlab_ci_local_plugin.GclRunConfigurationType
 
 class GclRunConfigurationFactory(type: ConfigurationType?) : ConfigurationFactory(type!!) {
     override fun getId(): String {

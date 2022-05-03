@@ -1,5 +1,5 @@
 // Copyright 2000-2022 JetBrains s.r.o. and other contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package dk.josefsens.gitlab_ci_local_plugin
+package dk.cego.gitlab_ci_local_plugin
 
 import com.intellij.execution.ExecutionException
 import com.intellij.execution.Executor
@@ -10,7 +10,6 @@ import com.intellij.execution.process.ProcessTerminatedListener
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.openapi.options.SettingsEditor
 import com.intellij.openapi.project.Project
-import dk.josefsens.gitlab_ci_local_plugin.dk.josefsens.gitlab_ci_local_plugin.WslUtils
 import java.io.File
 
 class GclRunConfiguration(project: Project?, factory: ConfigurationFactory?, name: String?) :
